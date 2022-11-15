@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyMovies.Data;
+using MyMovies.Misc;
 using MyMovies.Models;
+using RestSharp;
 
 namespace MyMovies.Controllers
 {
@@ -38,7 +40,9 @@ namespace MyMovies.Controllers
                 return new JsonResult("There is no movie to edit");
 
             obj.Title = movie.Title;
+            obj.Director = movie.Director;
             obj.Type = movie.Type;
+            obj.Rate = movie.Rate;
             obj.YearOfProduction = movie.YearOfProduction;
             obj.ExternalId = movie.ExternalId;
 
@@ -60,6 +64,24 @@ namespace MyMovies.Controllers
             context.SaveChanges();
 
             return new JsonResult("Movie deleted successfully");
+        }
+
+        [HttpGet("external")]
+        public JsonResult GetExternal()
+        {
+            var client = new RestClient("https://filmy.programdemo.pl/MyMovies");
+            var request = new RestRequest("");
+
+            var response = client.Get(request);
+
+            if (!response.IsSuccessStatusCode)
+                return new JsonResult("There is no data to get");
+
+            var processor = new ResultProcessor(context);
+
+            processor.Process(response.Content);
+
+            return new JsonResult("External data processed successfully");
         }
 
         private readonly ApplicationDbContext context;
