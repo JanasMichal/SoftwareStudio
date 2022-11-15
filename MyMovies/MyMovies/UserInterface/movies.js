@@ -1,6 +1,7 @@
 const Movies={template:`
 <div>
 <button type="button" class="btn btn-primary m-2 fload-end" data-bs-toggle="modal" data-bs-target="#movieModal" @click="addClick()">Add Movie</button>
+<button type="button" class="btn btn-success m-2 fload-end" @click="getClick()">GetMovies</button>
 <table class="table table-striped">
 <thead>
     <tr>
@@ -11,10 +12,16 @@ const Movies={template:`
             Title
         </th>
         <th>
+            Director
+        </th>
+        <th>
             Year of production
         </th>
         <th>
             Type
+        </th>
+        <th>
+            Rate
         </th>
         <th>
             Options
@@ -25,8 +32,10 @@ const Movies={template:`
     <tr v-for="movie in movies">
         <td>{{movie.Id}}</td>
         <td>{{movie.Title}}</td>
+        <td>{{movie.Director}}</td>
         <td>{{movie.YearOfProduction}}</td>
         <td>{{movie.Type}}</td>
+        <td>{{movie.Rate}}</td>
         <td>
             <button type="button" class="btn btn-light mr-1" data-bs-toggle="modal" data-bs-target="#movieModal" @click="editClick(movie)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -58,6 +67,12 @@ const Movies={template:`
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label">Director</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="Director">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label">Year of Production</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" v-model="YearOfProduction">
@@ -67,6 +82,12 @@ const Movies={template:`
                         <label class="control-label">Type</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" v-model="Type">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Rate</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="Rate">
                         </div>
                     </div>
                     <div class="submit m-3">
@@ -87,13 +108,15 @@ data(){
         Id: "",
         modalTitle: "",
         Title: "",
+        Director: "",
         YearOfProduction: "",
-        Type: ""
+        Type: "",
+        Rate: ""
     }
 },
 methods:{
     refreshData(){
-        axios.get("https://localhost:5001/api/Movie")
+        axios.get("https://localhost:7171/api/Movie")
         .then((response) => {
             this.movies = response.data;
         });
@@ -102,21 +125,27 @@ methods:{
         this.modalTitle = "Add Movie";
         this.Id = "";
         this.Title = "";
+        this.Director = "";
         this.Type = "";
         this.YearOfProduction = "";
+        this.Rate = "";
     },
     editClick(movie){
         this.modalTitle = "Edit Movie";
         this.Id = movie.Id;
         this.Title = movie.Title;
+        this.Director = movie.Director;
         this.Type = movie.Type;
         this.YearOfProduction = movie.YearOfProduction;
+        this.Rate = movie.Rate;
     },
     createClick(){
-        axios.post("https://localhost:5001/api/Movie", {
+        axios.post("https://localhost:7171/api/Movie", {
             Title:this.Title,
+            Director:this.Director,
             Type:this.Type,
-            YearOfProduction:this.YearOfProduction
+            YearOfProduction:this.YearOfProduction,
+            Rate:this.Rate
         })
         .then((response) => {
             alert(response.data);
@@ -124,11 +153,13 @@ methods:{
         })
     },
     updateClick(){
-        axios.put("https://localhost:5001/api/Movie", {
+        axios.put("https://localhost:7171/api/Movie", {
             Id:this.Id,
             Title:this.Title,
+            Director:this.Director,
             Type:this.Type,
             YearOfProduction:this.YearOfProduction,
+            Rate:this.Rate
         })
         .then((response) => {
             alert(response.data);
@@ -139,7 +170,14 @@ methods:{
         if(!confirm("Are you sure?")){
             return;
         }
-        axios.delete("https://localhost:5001/api/Movie/"+id)
+        axios.delete("https://localhost:7171/api/Movie/"+id)
+        .then((response) => {
+            alert(response.data);
+            this.refreshData();
+        })
+    },
+    getClick(){
+        axios.get("https://localhost:7171/api/Movie/external")
         .then((response) => {
             alert(response.data);
             this.refreshData();
