@@ -116,7 +116,7 @@ data(){
 },
 methods:{
     refreshData(){
-        axios.get("https://localhost:7171/api/Movie")
+        axios.get("https://localhost:5001/api/Movie")
         .then((response) => {
             this.movies = response.data;
         });
@@ -140,7 +140,7 @@ methods:{
         this.Rate = movie.Rate;
     },
     createClick(){
-        axios.post("https://localhost:7171/api/Movie", {
+        axios.post("https://localhost:5001/api/Movie", {
             Title:this.Title,
             Director:this.Director,
             Type:this.Type,
@@ -153,7 +153,7 @@ methods:{
         })
     },
     updateClick(){
-        axios.put("https://localhost:7171/api/Movie", {
+        axios.put("https://localhost:5001/api/Movie", {
             Id:this.Id,
             Title:this.Title,
             Director:this.Director,
@@ -170,14 +170,14 @@ methods:{
         if(!confirm("Are you sure?")){
             return;
         }
-        axios.delete("https://localhost:7171/api/Movie/"+id)
+        axios.delete("https://localhost:5001/api/Movie/"+id)
         .then((response) => {
             alert(response.data);
             this.refreshData();
         })
     },
     getClick(){
-        axios.get("https://localhost:7171/api/Movie/external")
+        axios.get("https://localhost:5001/api/Movie/external")
         .then((response) => {
             alert(response.data);
             this.refreshData();
